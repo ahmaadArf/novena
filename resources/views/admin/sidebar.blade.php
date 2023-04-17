@@ -18,8 +18,7 @@
             <span>Dashborad</span></a>
     </li>
 
-
-    @if(Gate::any(['all_about','add_about','delete_about','edit_about']))
+        @canany(['about-list','about-create','about-edit','about-delete'])
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseabout"
@@ -35,11 +34,9 @@
                 </div>
             </div>
         </li>
-    @endif
+        @endcanany
 
-
-
-    @if(Gate::any(['all_award','add_award','delete_award','edit_award']))
+        @canany(['award-list','award-create','award-edit','award-delete'])
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseaward"
@@ -55,11 +52,9 @@
                 </div>
             </div>
         </li>
-    @endif
+        @endcanany
 
-
-
-    @if(Gate::any(['all_department','add_department','delete_department','edit_department']))
+        @canany(['department-list','department-create','department-edit','department-delete'])
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsedepartment"
@@ -75,11 +70,9 @@
                 </div>
             </div>
         </li>
-    @endif
+        @endcanany
 
-
-
-    @if(Gate::any(['all_partner','add_partner','delete_partner','edit_partner']))
+        @canany(['partner-list','partner-create','partner-edit','partner-delete'])
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsepartners"
@@ -94,11 +87,9 @@
                 </div>
             </div>
         </li>
-    @endif
+        @endcanany
 
-
-
-    @if(Gate::any(['all_doctor','add_doctor','delete_doctor','edit_doctor']))
+        @can('doctor-list')
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsedoctors"
@@ -115,10 +106,9 @@
                 </div>
             </div>
         </li>
-    @endif
+        @endcan
 
-
-    @if(Gate::any(['all_feature','add_feature','delete_feature','edit_feature']))
+        @can('feature-list')
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefeature"
@@ -135,11 +125,10 @@
             </div>
         </div>
          </li>
-    @endif
+         @endcan
 
-
-    @if(Gate::any(['all_qualification','add_qualification','delete_qualification','edit_qualification']))
-        <hr class="sidebar-divider d-none d-md-block">
+        @can('qualifications-list')
+       <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsequalification"
                 aria-expanded="true" aria-controls="collapsequalification">
@@ -155,10 +144,9 @@
                 </div>
             </div>
         </li>
-    @endif
+        @endcan
 
-
-    @if(Gate::any(['all_testimonial','add_teall_testimonial','delete_teall_testimonial','edit_teall_testimonial']))
+        @can('testimonial-list')
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item ">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsetestimonial"
@@ -175,9 +163,9 @@
                 </div>
             </div>
         </li>
-    @endif
+        @endcan
 
-    @if(Gate::any(['all_schedule','add_schedule','delete_schedule','edit_schedule']))
+        @can('schedule-list')
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item ">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseschedule"
@@ -194,27 +182,47 @@
                 </div>
             </div>
         </li>
-    @endif
+        @endcan
 
-
-    @if(Gate::allows(['all_user']))
+        @can('role-list')
         <hr class="sidebar-divider d-none d-md-block">
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.user') }}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>User</span></a>
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRole"
+                aria-expanded="true" aria-controls="collapseRole">
+                <i class="fas fa-users-cog"></i>
+                <span>Role</span>
+            </a>
+            <div id="collapseRole" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('admin.roles.index') }}">All Role</a>
+                    <a class="collapse-item" href="{{ route('admin.roles.create') }}">Add Role</a>
+
+                </div>
+            </div>
         </li>
-    @endif
+        @endcan
 
-
-    @if(Gate::any(['all_role','add_role','delete_role','edit_role']))
+        @can('user-list')
         <hr class="sidebar-divider d-none d-md-block">
-        <li class="nav-item mb-4">
-        <a class="nav-link" href="{{ route('admin.roles.index') }}">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Role</span></a>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUSer"
+                aria-expanded="true" aria-controls="collapseUSer">
+                <i class="fas fa-users-cog"></i>
+                <span>User</span>
+            </a>
+            <div id="collapseUSer" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('admin.users.index') }}">All User</a>
+                    <a class="collapse-item" href="{{ route('admin.users.create') }}">Add User</a>
+
+                </div>
+            </div>
         </li>
-    @endif
+
+        @endcan
+
+
+
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>

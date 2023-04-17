@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Gate;
 
 class DoctorController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:doctor-list|doctor-create|doctor-edit|doctor-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:doctor-create', ['only' => ['create','store']]);
+         $this->middleware('permission:doctor-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:doctor-delete', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +26,6 @@ class DoctorController extends Controller
      */
     public function index()
     {
-        Gate::authorize('all_doctor');
 
         $doctors=Doctor::with('department')->paginate(10);
         return view('admin.doctor.index',compact('doctors'));
@@ -32,7 +38,6 @@ class DoctorController extends Controller
      */
     public function create()
     {
-        Gate::authorize('add_doctor');
 
         $departments=Department::all();
         $schedules=Schedule::all();
@@ -48,7 +53,6 @@ class DoctorController extends Controller
      */
     public function store(Request $request)
     {
-        Gate::authorize('add_doctor');
 
         $request->validate([
             'name'=>'required',
@@ -91,7 +95,6 @@ class DoctorController extends Controller
      */
     public function show($id)
     {
-        Gate::authorize('all_doctor');
 
        $doctor=Doctor::find($id);
        $schedules=$doctor->schedules;
@@ -106,7 +109,6 @@ class DoctorController extends Controller
      */
     public function edit($id)
     {
-        Gate::authorize('edit_doctor');
 
         $doctor=Doctor::find($id);
         $departments=Department::all();
@@ -124,7 +126,6 @@ class DoctorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Gate::authorize('edit_doctor');
 
         $doctor=Doctor::find($id);
         $request->validate([
@@ -169,7 +170,6 @@ class DoctorController extends Controller
      */
     public function destroy($id)
     {
-        Gate::authorize('delete_doctor');
 
         $doctor=Doctor::find($id);
         File::delete(public_path('image/doctors/'.$doctor->image));
@@ -179,7 +179,6 @@ class DoctorController extends Controller
     }
     public function trash()
     {
-        Gate::authorize('delete_doctor');
 
         $doctors = Doctor::onlyTrashed()->paginate(10);
 
@@ -188,7 +187,6 @@ class DoctorController extends Controller
 
     public function restore($id)
     {
-        Gate::authorize('delete_doctor');
 
         Doctor::onlyTrashed()->find($id)->restore();
 
@@ -197,7 +195,6 @@ class DoctorController extends Controller
 
     public function forcedelete($id)
     {
-        Gate::authorize('delete_doctor');
 
         Doctor::onlyTrashed()->find($id)->forcedelete();
 

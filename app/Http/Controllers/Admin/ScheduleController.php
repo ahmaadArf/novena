@@ -11,16 +11,21 @@ use Illuminate\Support\Facades\Gate;
 
 class ScheduleController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:schedule-list|schedule-create|schedule-edit|schedule-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:schedule-create', ['only' => ['create','store']]);
+         $this->middleware('permission:schedule-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:schedule-delete', ['only' => ['destroy']]);
+    }
     public function index()
     {
-        Gate::authorize('all_schedule');
 
         $schedules=Schedule::paginate(10);
         return view('admin.schedule.index',compact('schedules'));
     }
     public function create()
     {
-        Gate::authorize('add_schedule');
 
 
         return view('admin.schedule.create');
@@ -28,7 +33,6 @@ class ScheduleController extends Controller
     }
     public function store(Request $request)
     {
-        Gate::authorize('add_schedule');
 
         $request->validate([
             'day'=>'required',
@@ -51,7 +55,6 @@ class ScheduleController extends Controller
     }
     public function edit($id)
     {
-        Gate::authorize('edit_schedule');
 
         $schedule=Schedule::find($id);
 
@@ -67,7 +70,6 @@ class ScheduleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Gate::authorize('edit_schedule');
 
         $schedule=Schedule::find($id);
         $request->validate([
@@ -99,7 +101,6 @@ class ScheduleController extends Controller
      */
     public function destroy($id)
     {
-        Gate::authorize('delete_schedule');
 
         $schedule=Schedule::find($id);
         $schedule->delete();
@@ -108,7 +109,6 @@ class ScheduleController extends Controller
     }
     public function trash()
     {
-        Gate::authorize('delete_schedule');
 
         $schedules = Schedule::onlyTrashed()->paginate(10);
 
@@ -117,7 +117,6 @@ class ScheduleController extends Controller
 
     public function restore($id)
     {
-        Gate::authorize('delete_schedule');
 
         Schedule::onlyTrashed()->find($id)->restore();
 
@@ -126,7 +125,6 @@ class ScheduleController extends Controller
 
     public function forcedelete($id)
     {
-        Gate::authorize('delete_schedule');
 
         Schedule::onlyTrashed()->find($id)->forcedelete();
 

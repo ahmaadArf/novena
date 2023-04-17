@@ -28,10 +28,5 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        foreach(Abliity::all() as $ability) {
-            Gate::define($ability->code, function($user) use($ability) {
-                return $user->role->abilities()->where('code', $ability->code)->exists();
-            });
-        }
     }
 }

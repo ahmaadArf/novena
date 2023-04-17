@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\site\SiteController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AboutController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AwardController;
@@ -79,6 +80,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth','check_user')->group(f
     Route::resource('partners',PartnerController::class);
 
     Route::resource('roles',RoleController::class);
+
+    Route::resource('users',UserController::class);
+
+
 
 
 });

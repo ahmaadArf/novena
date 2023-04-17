@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Gate;
 
 class PartnerController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:partner-list|partner-create|partner-edit|partner-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:partner-create', ['only' => ['create','store']]);
+         $this->middleware('permission:partner-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:partner-delete', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +24,6 @@ class PartnerController extends Controller
      */
     public function index()
     {
-        Gate::authorize('all_partner');
 
         $partners=Partner::paginate(10);
         return view('admin.partner.index',compact('partners'));
@@ -30,7 +36,6 @@ class PartnerController extends Controller
      */
     public function create()
     {
-        Gate::authorize('add_partner');
 
         return view('admin.partner.create');
 
@@ -44,7 +49,6 @@ class PartnerController extends Controller
      */
     public function store(Request $request)
     {
-        Gate::authorize('add_partner');
 
         $request->validate([
             'image'=>'required'
@@ -78,7 +82,6 @@ class PartnerController extends Controller
      */
     public function edit($id)
     {
-        Gate::authorize('edit_partner');
 
         $partner=Partner::find($id);
 
@@ -94,7 +97,6 @@ class PartnerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Gate::authorize('edit_partner');
 
         $partner=Partner::find($id);
         $img_name=$partner->image;
@@ -121,7 +123,6 @@ class PartnerController extends Controller
      */
     public function destroy($id)
     {
-        Gate::authorize('delete_partner');
 
         $partner=Partner::find($id);
         File::delete(public_path('image/partners/'.$partner->image));

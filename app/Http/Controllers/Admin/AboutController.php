@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Gate;
 
 class AboutController extends Controller
 {
+
+    function __construct()
+    {
+         $this->middleware('permission:about-list|about-create|about-edit|about-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:about-create', ['only' => ['create','store']]);
+         $this->middleware('permission:about-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:about-delete', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +25,6 @@ class AboutController extends Controller
      */
     public function index()
     {
-        Gate::authorize('all_about');
 
         $abouts=About::paginate(10);
         return view('admin.about.index',compact('abouts'));
@@ -30,7 +37,6 @@ class AboutController extends Controller
      */
     public function create()
     {
-        Gate::authorize('add_about');
 
         return view('admin.about.create');
 
@@ -44,7 +50,6 @@ class AboutController extends Controller
      */
     public function store(Request $request)
     {
-        Gate::authorize('add_about');
 
         $request->validate([
             'name'=>'required',
@@ -84,7 +89,6 @@ class AboutController extends Controller
      */
     public function edit($id)
     {
-        Gate::authorize('edit_about');
 
         $about=About::find($id);
 
@@ -100,7 +104,6 @@ class AboutController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Gate::authorize('edit_about');
 
         $about=About::find($id);
         $request->validate([
@@ -137,7 +140,7 @@ class AboutController extends Controller
      */
     public function destroy($id)
     {
-        Gate::authorize('delete_about');
+
 
         $about=About::find($id);
         File::delete(public_path('image/abouts/'.$about->image));
@@ -147,7 +150,6 @@ class AboutController extends Controller
     }
     public function trash()
     {
-        Gate::authorize('delete_about');
 
         $abouts = About::onlyTrashed()->paginate(10);
 
@@ -156,7 +158,6 @@ class AboutController extends Controller
 
     public function restore($id)
     {
-        Gate::authorize('delete_about');
 
         About::onlyTrashed()->find($id)->restore();
 
@@ -165,7 +166,6 @@ class AboutController extends Controller
 
     public function forcedelete($id)
     {
-        Gate::authorize('delete_about');
 
         About::onlyTrashed()->find($id)->forcedelete();
 

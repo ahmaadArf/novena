@@ -1,15 +1,21 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
-use App\Models\Role;
-use App\Models\Abliity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:role-create', ['only' => ['create','store']]);
+         $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,10 +23,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-        Gate::authorize('all_role');
+        $roles=Role::all();
+        return view('admin.roles.index',compact('roles'));
 
-        $roles=Role::paginate(10);
-        return view('role.index',compact('roles'));
     }
 
     /**
@@ -30,10 +35,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        Gate::authorize('add_role');
+        $permissions = Permission::all();
+        return view('admin.roles.create',compact('permissions'));
 
-        $abilities = Abliity::all();
-        return view('role.create', compact('abilities'));
     }
 
     /**
@@ -44,19 +48,17 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        Gate::authorize('add_role');
-
         $request->validate([
-            'name' => 'required'
+            'name'=>'required',
+            'permission'=>'required'
         ]);
 
-       $role= Role::create([
-            'name' => $request->name
+        $role=Role::create([
+            'name'=>$request->name
         ]);
+        $role->syncPermissions($request->permission);
 
-        $role->abilities()->attach($request->ability);
-
-        return redirect()->route('admin.roles.index');
+        return redirect()->route('admin.roles.index')->with('msg', 'Role added successfully')->with('type', 'success');
     }
 
     /**
@@ -78,11 +80,10 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        Gate::authorize('edit_role');
-
-    $role = Role::findOrFail($id);
-    $abilities = Abliity::all();
-    return view('role.edit', compact('abilities', 'role'));
+        $role=Role::find($id);
+        $permissions = Permission::all();
+        $rolePermissions=$role->permissions->pluck('id')->all();
+        return view('admin.roles.edit',compact('role','permissions','rolePermissions'));
     }
 
     /**
@@ -94,20 +95,18 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Gate::authorize('edit_role');
-
-        $role = Role::findOrFail($id);
         $request->validate([
-            'name' => 'required'
+            'name'=>'required',
+            'permission'=>'required'
         ]);
 
-        $role->update([
-            'name' => $request->name
-        ]);
+        $role=Role::find($id);
+        $role->update(['name'=>$request->name]);
+        $role->syncPermissions($request->permission);
 
-        $role->abilities()->sync($request->ability);
+        return redirect()->route('admin.roles.index')->with('msg', 'Role Updated successfully')->with('type', 'success');
 
-        return redirect()->route('admin.roles.index');
+
     }
 
     /**
@@ -118,11 +117,9 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        Gate::authorize('delete_role');
-
-        $role = Role::findOrFail($id);
+        $role=Role::find($id);
         $role->delete();
+        return redirect()->route('admin.roles.index')->with('msg', 'Role Delete successfully')->with('type', 'success');
 
-        return redirect()->route('admin.roles.index');
     }
 }

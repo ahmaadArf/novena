@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Gate;
 
 class AdminController extends Controller
 {
+
     public function index()
     {
         return view('admin.index');
